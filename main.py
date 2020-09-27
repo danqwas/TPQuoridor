@@ -3,7 +3,7 @@ import math
 from queue import PriorityQueue
 
 # Dimensiones de la  pantalla y titulo
-DIMENSIONES = 400
+DIMENSIONES = 600
 VENTANA = pygame.display.set_mode((DIMENSIONES, DIMENSIONES))
 pygame.display.set_caption("Trabajo Parcial - Complejidad Algoritimica")
 
@@ -190,10 +190,62 @@ def get_clicked_pos(pos, filas, ancho):
     columna = x // brecha
 
     return fila, columna
+#por testear
+def BFS(draw,mapa, inicio, final):
+    count = 0
+    open_set = PriorityQueue()
+    open_set.put((0, count, inicio))
+    came_from = {}
+    g_score = {celda: float("inf") for fila in mapa for celda in fila}
+    g_score[inicio] = 0
+    f_score = {celda: float("inf") for fila in mapa for celda in fila}
+    f_score[inicio] = h(inicio.getPosicion(), final.getPosicion())
+    open_set_hash = {inicio}
+    while not open_set.empty():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        current=open_set.get()[2]
+        open_set_hash.remove(current)
+        if current == final:
+            reconstruirCamino(came_from, final, draw)
+            final.make_final()
+            return True
+        #Algoritmo
+        for vecino in current.vecinos:
+           temp_g_score =g_score[current]+1
+           if temp_g_score<g_score[vecino]:
+            came_from[vecino] = current
+            g_score[vecino] = temp_g_score
+            f_score[vecino] = temp_g_score + h(vecino.getPosicion(), final.getPosicion())
+           if vecino not in open_set_hash:
+               count += 1
+               open_set.put((f_score[vecino], count, vecino))
+               open_set_hash.add(vecino)
+               vecino.make_open()
 
+        #Fin de algoritmo
+        draw()
+
+        if current != inicio:
+            current.make_closed()
+
+
+'''def bfs(visited, graph, node):
+  visited.append(node)
+  queue.append(node)
+
+  while queue:
+    s = queue.pop(0) 
+    print (s, end = " ") 
+
+    for neighbour in graph[s]:
+      if neighbour not in visited:
+        visited.append(neighbour)
+        queue.append(neighbour)'''
 
 def main(ventana, ancho):
-    filas = 9
+    filas = 10
     mapa = mapaJuego(filas, ancho)
 
     inicio = None
@@ -237,7 +289,7 @@ def main(ventana, ancho):
                         for celda in fila:
                             celda.actualizarVecinos(mapa)
 
-                    AStarAlgoritmo(lambda: draw(ventana, mapa, filas, ancho), mapa, inicio, final)
+                    BFS(lambda: draw(ventana, mapa, filas, ancho), mapa, inicio, final)
 
                 if event.key == pygame.K_c:
                     inicio = None
