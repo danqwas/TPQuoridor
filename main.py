@@ -1,9 +1,6 @@
 import pygame
-import math
 from queue import PriorityQueue
 import time
-from tkinter import messagebox, Tk
-from collections import deque
 # Dimensiones de la  pantalla y titulo
 DIMENSIONES = 600
 VENTANA = pygame.display.set_mode((DIMENSIONES, DIMENSIONES))
@@ -288,7 +285,7 @@ def main(ventana, ancho):
                     print(time.time()-t0)
                     t1=time.time()
                     BFS(lambda: draw(ventana, mapa, filas, ancho), mapa, inicio, final)
-                    print(time.time() - t0)
+                    print(time.time() - t1)
                 if event.key == pygame.K_c:
                     inicio = None
                     final = None
